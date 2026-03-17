@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プログラミング言語診断 - 初心者向け</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            padding: 18px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .option-icon {
+            font-size: 28px;
+            min-width: 40px;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            animation: fadeIn 0.6s ease;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .result-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result-subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .language-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .language-rank {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .language-header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .language-icon {
+            font-size: 48px;
+        }
+
+        .language-info {
+            flex: 1;
+        }
+
+        .language-name {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .language-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .match-rate {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .language-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .language-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .use-cases {
+            margin-bottom: 20px;
+        }
+
+        .use-cases h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .use-case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .use-case-tag {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .pros {
+            background: #d4edda;
+        }
+
+        .cons {
+            background: #f8d7da;
+        }
+
+        .pros h4, .cons h4 {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .pros h4 {
+            color: #155724;
+        }
+
+        .cons h4 {
+            color: #721c24;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .pros li, .cons li {
+            margin-bottom: 6px;
+            font-size: 13px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .pros li {
+            color: #155724;
+        }
+
+        .cons li {
+            color: #721c24;
+        }
+
+        .pros li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .cons li:before {
+            content: "×";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .learning-path {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .learning-path h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .learning-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .learning-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: #ffc107;
+            color: #856404;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .step-title {
+            color: #856404;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .step-description {
+            color: #856404;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .resources {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .resources h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .resource-icon {
+            font-size: 20px;
+        }
+
+        .resource-content {
+            flex: 1;
+        }
+
+        .resource-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .resource-type {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .language-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- スタート画面 -->
+        <div id="start-screen">
+            <h1>💻 プログラミング言語診断</h1>
+            <p class="subtitle">
+                8つの質問に答えるだけで、あなたに最適なプログラミング言語を診断します。<br>
+                作りたいもの、学習スタイル、目標に合わせて、最初に学ぶべき言語をご提案します！
+            </p>
+            <button class="button" onclick="startTest()">診断を始める</button>
+        </div>
+
+        <!-- テスト画面 -->
+        <div id="test-screen" class="hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="question-container">
+                <div class="question-number" id="question-number"></div>
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            <button class="button" id="next-button" onclick="nextQuestion()" disabled>次へ</button>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="hidden">
+            <div class="result-container">
+                <div class="result-header">
+                    <h1 class="result-title">診断結果</h1>
+                    <p class="result-subtitle">あなたにおすすめのプログラミング言語TOP3</p>
+                </div>
+                <div id="recommendations"></div>
+                <button class="button" onclick="restartTest()" style="margin-top: 20px;">もう一度診断する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "何を作りたいですか？",
+                options: [
+                    { 
+                        icon: "🌐", 
+                        title: "Webサイト・Webアプリ",
+                        desc: "ブログ、ECサイト、SNSなど",
+                        scores: { web: 3, frontend: 2 }
+                    },
+                    { 
+                        icon: "📱", 
+                        title: "スマホアプリ",
+                        desc: "iOS・Androidアプリ",
+                        scores: { mobile: 3, native: 2 }
+                    },
+                    { 
+                        icon: "🎮", 
+                        title: "ゲーム",
+                        desc: "2D/3Dゲーム、ブラウザゲーム",
+                        scores: { game: 3, creative: 2 }
+                    },
+                    { 
+                        icon: "🤖", 
+                        title: "AI・機械学習",
+                        desc: "データ分析、画像認識など",
+                        scores: { ai: 3, data: 2 }
+                    },
+                    { 
+                        icon: "⚙️", 
+                        title: "システム・ツール",
+                        desc: "業務効率化、自動化ツール",
+                        scores: { system: 2, automation: 2 }
+                    }
+                ]
+            },
+            {
+                question: "プログラミング経験はありますか？",
+                options: [
+                    { 
+                        icon: "🌱", 
+                        title: "全くの初心者",
+                        desc: "コードを書いたことがない",
+                        scores: { beginner: 3, easy: 2 }
+                    },
+                    { 
+                        icon: "📚", 
+                        title: "少し触ったことがある",
+                        desc: "簡単なコードは書ける",
+                        scores: { beginner: 1, easy: 1 }
+                    },
+                    { 
+                        icon: "💪", 
+                        title: "他の言語を学んだことがある",
+                        desc: "プログラミングの基礎は理解している",
+                        scores: { beginner: 0, advanced: 2 }
+                    }
+                ]
+            },
+            {
+                question: "学習にかけられる時間は？",
+                options: [
+                    { 
+                        icon: "🏃", 
+                        title: "できるだけ早く習得したい",
+                        desc: "1〜2ヶ月で基礎を",
+                        scores: { quick: 3, easy: 2 }
+                    },
+                    { 
+                        icon: "🚶", 
+                        title: "じっくり学びたい",
+                        desc: "3〜6ヶ月かけてもOK",
+                        scores: { quick: 1, deep: 2 }
+                    },
+                    { 
+                        icon: "🧘", 
+                        title: "時間をかけて深く学びたい",
+                        desc: "半年以上かけて本格的に",
+                        scores: { quick: 0, deep: 3 }
+                    }
+                ]
+            },
+            {
+                question: "どんな働き方を目指していますか？",
+                options: [
+                    { 
+                        icon: "💼", 
+                        title: "就職・転職したい",
+                        desc: "企業のエンジニアとして働く",
+                        scores: { job: 3, popular: 2 }
+                    },
+                    { 
+                        icon: "🏠", 
+                        title: "フリーランスになりたい",
+                        desc: "在宅で自由に働く",
+                        scores: { freelance: 3, web: 2 }
+                    },
+                    { 
+                        icon: "🎨", 
+                        title: "趣味・副業として",
+                        desc: "楽しみながら収入も得たい",
+                        scores: { hobby: 2, creative: 2 }
+                    },
+                    { 
+                        icon: "🚀", 
+                        title: "起業・サービス開発",
+                        desc: "自分のサービスを作りたい",
+                        scores: { startup: 3, fullstack: 2 }
+                    }
+                ]
+            },
+            {
+                question: "重視するポイントは？",
+                options: [
+                    { 
+                        icon: "📈", 
+                        title: "需要の高さ・年収",
+                        desc: "求人が多く稼げる言語",
+                        scores: { popular: 3, job: 2 }
+                    },
+                    { 
+                        icon: "😊", 
+                        title: "学びやすさ",
+                        desc: "初心者でも挫折しにくい",
+                        scores: { easy: 3, beginner: 2 }
+                    },
+                    { 
+                        icon: "🎯", 
+                        title: "汎用性",
+                        desc: "いろいろなものが作れる",
+                        scores: { versatile: 3, fullstack: 2 }
+                    },
+                    { 
+                        icon: "⚡", 
+                        title: "トレンド・最新技術",
+                        desc: "今注目されている言語",
+                        scores: { modern: 3, trendy: 2 }
+                    }
+                ]
+            },
+            {
+                question: "開発環境の好みは？",
+                options: [
+                    { 
+                        icon: "🖥️", 
+                        title: "PCだけで完結したい",
+                        desc: "ローカルで開発",
+                        scores: { local: 2 }
+                    },
+                    { 
+                        icon: "☁️", 
+                        title: "クラウド・オンラインでも可",
+                        desc: "ブラウザで開発できてもOK",
+                        scores: { cloud: 2, web: 1 }
+                    },
+                    { 
+                        icon: "🤷", 
+                        title: "こだわらない",
+                        desc: "どちらでもOK",
+                        scores: {}
+                    }
+                ]
+            },
+            {
+                question: "フロントエンドとバックエンド、どちらに興味がありますか？",
+                options: [
+                    { 
+                        icon: "🎨", 
+                        title: "フロントエンド（見た目）",
+                        desc: "UI/UXデザイン、画面の動き",
+                        scores: { frontend: 3, web: 2 }
+                    },
+                    { 
+                        icon: "⚙️", 
+                        title: "バックエンド（裏側）",
+                        desc: "データ処理、サーバー管理",
+                        scores: { backend: 3, system: 2 }
+                    },
+                    { 
+                        icon: "🔄", 
+                        title: "両方できるようになりたい",
+                        desc: "フルスタックエンジニア",
+                        scores: { fullstack: 3, versatile: 2 }
+                    },
+                    { 
+                        icon: "❓", 
+                        title: "まだわからない",
+                        desc: "これから決めたい",
+                        scores: { beginner: 1 }
+                    }
+                ]
+            },
+            {
+                question: "学習リソースの好みは？",
+                options: [
+                    { 
+                        icon: "📚", 
+                        title: "日本語の情報が豊富",
+                        desc: "日本語の記事や動画が多い",
+                        scores: { japanese: 3 }
+                    },
+                    { 
+                        icon: "🌍", 
+                        title: "英語でもOK",
+                        desc: "英語のドキュメントも読める",
+                        scores: { english: 2 }
+                    },
+                    { 
+                        icon: "👥", 
+                        title: "コミュニティが活発",
+                        desc: "質問しやすい環境",
+                        scores: { community: 2 }
+                    }
+                ]
+            }
+        ];
+
+        const languages = [
+            {
+                name: "JavaScript",
+                icon: "📜",
+                subtitle: "Web開発の万能選手",
+                description: "フロントエンドからバックエンドまで、1つの言語で完結できる最強の汎用言語。Web開発をするなら必須のスキルです。",
+                requirements: {
+                    web: 3,
+                    frontend: 2,
+                    versatile: 3,
+                    beginner: 1,
+                    easy: 2,
+                    fullstack: 3
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜4ヶ月",
+                jobDemand: "非常に高い",
+                averageSalary: "400〜800万円",
+                useCases: [
+                    "Webサイト開発",
+                    "Webアプリ開発",
+                    "スマホアプリ(React Native)",
+                    "サーバー開発(Node.js)",
+                    "デスクトップアプリ(Electron)"
+                ],
+                pros: [
+                    "1つの言語でフロント・バック両方できる",
+                    "学習リソースが豊富",
+                    "求人数が圧倒的に多い",
+                    "ブラウザですぐ試せる",
+                    "フレームワークが充実"
+                ],
+                cons: [
+                    "書き方の自由度が高く混乱しやすい",
+                    "フレームワークの移り変わりが早い",
+                    "型安全性が低い（TypeScriptで解決可能）"
+                ],
+                learningPath: [
+                    { title: "HTML/CSSの基礎", desc: "まずはWebページの構造を理解" },
+                    { title: "JavaScript基礎", desc: "変数、関数、DOM操作を学ぶ" },
+                    { title: "ES6+の文法", desc: "モダンなJavaScriptを習得" },
+                    { title: "React/Vueなどのフレームワーク", desc: "効率的な開発手法を学ぶ" },
+                    { title: "Node.jsでバックエンド", desc: "サーバーサイドも理解" }
+                ],
+                resources: [
+                    { name: "Progate", type: "オンライン学習", icon: "🎓" },
+                    { name: "ドットインストール", type: "動画教材", icon: "📹" },
+                    { name: "JavaScript Primer", type: "無料教科書", icon: "📖" },
+                    { name: "MDN Web Docs", type: "公式ドキュメント", icon: "📚" }
+                ]
+            },
+            {
+                name: "Python",
+                icon: "🐍",
+                subtitle: "AI・データ分析の定番",
+                description: "シンプルで読みやすい文法が特徴。AI、機械学習、データ分析、自動化など幅広い用途で使える万能言語です。",
+                requirements: {
+                    ai: 3,
+                    data: 3,
+                    automation: 2,
+                    beginner: 2,
+                    easy: 3,
+                    versatile: 2
+                },
+                difficulty: "★☆☆",
+                learningTime: "1〜3ヶ月",
+                jobDemand: "非常に高い",
+                averageSalary: "500〜900万円",
+                useCases: [
+                    "AI・機械学習",
+                    "データ分析・可視化",
+                    "Webスクレイピング",
+                    "業務自動化",
+                    "Webアプリ開発(Django/Flask)"
+                ],
+                pros: [
+                    "文法がシンプルで学びやすい",
+                    "AI・データサイエンス分野で圧倒的シェア",
+                    "ライブラリが豊富",
+                    "汎用性が高い",
+                    "日本語情報も豊富"
+                ],
+                cons: [
+                    "実行速度が遅い",
+                    "スマホアプリ開発には不向き",
+                    "インデントが厳密"
+                ],
+                learningPath: [
+                    { title: "Python基本文法", desc: "変数、条件分岐、ループを理解" },
+                    { title: "関数とクラス", desc: "オブジェクト指向を学ぶ" },
+                    { title: "ライブラリの使い方", desc: "NumPy、Pandasなど" },
+                    { title: "データ分析の基礎", desc: "実際のデータを扱う" },
+                    { title: "機械学習入門", desc: "scikit-learnで実践" }
+                ],
+                resources: [
+                    { name: "PyQ", type: "オンライン学習", icon: "🎓" },
+                    { name: "Progate", type: "オンライン学習", icon: "🎓" },
+                    { name: "Python公式チュートリアル", type: "公式ドキュメント", icon: "📚" },
+                    { name: "Aidemy", type: "AI特化型学習", icon: "🤖" }
+                ]
+            },
+            {
+                name: "Java",
+                icon: "☕",
+                subtitle: "企業システムの王道",
+                description: "大規模システム開発で圧倒的なシェアを持つ言語。Androidアプリ開発にも使用され、求人数も安定して多い。",
+                requirements: {
+                    job: 3,
+                    mobile: 2,
+                    system: 3,
+                    popular: 3,
+                    deep: 2
+                },
+                difficulty: "★★★",
+                learningTime: "3〜6ヶ月",
+                jobDemand: "非常に高い",
+                averageSalary: "450〜850万円",
+                useCases: [
+                    "企業の業務システム",
+                    "Androidアプリ",
+                    "Webアプリケーション",
+                    "大規模システム",
+                    "組み込みシステム"
+                ],
+                pros: [
+                    "求人数が非常に多い",
+                    "大企業での採用が多い",
+                    "安定性・信頼性が高い",
+                    "型安全で堅牢なコード",
+                    "長期的に使われ続ける"
+                ],
+                cons: [
+                    "学習コストが高い",
+                    "コード量が多くなりがち",
+                    "環境構築が複雑",
+                    "文法が厳格"
+                ],
+                learningPath: [
+                    { title: "Java基本文法", desc: "変数、型、クラスの概念" },
+                    { title: "オブジェクト指向", desc: "継承、ポリモーフィズムなど" },
+                    { title: "コレクションフレームワーク", desc: "データ構造の使い方" },
+                    { title: "Spring Framework", desc: "Webアプリケーション開発" },
+                    { title: "Android開発(Kotlin)", desc: "モバイルアプリに挑戦" }
+                ],
+                resources: [
+                    { name: "Progate", type: "オンライン学習", icon: "🎓" },
+                    { name: "paiza", type: "オンライン学習", icon: "🎓" },
+                    { name: "Java公式チュートリアル", type: "公式ドキュメント", icon: "📚" },
+                    { name: "スッキリわかるJava入門", type: "書籍", icon: "📖" }
+                ]
+            },
+            {
+                name: "TypeScript",
+                icon: "🔷",
+                subtitle: "型安全なJavaScript",
+                description: "JavaScriptに型システムを追加した言語。大規模開発で威力を発揮し、モダンなWeb開発では主流になりつつあります。",
+                requirements: {
+                    web: 3,
+                    frontend: 3,
+                    modern: 3,
+                    trendy: 3,
+                    advanced: 1
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜4ヶ月（JS経験者は1ヶ月）",
+                jobDemand: "高い（急増中）",
+                averageSalary: "500〜900万円",
+                useCases: [
+                    "大規模Webアプリ",
+                    "React/Vue/Angularアプリ",
+                    "Node.jsバックエンド",
+                    "フルスタック開発"
+                ],
+                pros: [
+                    "型安全でバグが減る",
+                    "IDEの補完が強力",
+                    "JavaScriptの資産が使える",
+                    "大規模開発に最適",
+                    "需要が急増中"
+                ],
+                cons: [
+                    "JavaScriptの知識が前提",
+                    "学習コストがやや高い",
+                    "設定が複雑になりがち"
+                ],
+                learningPath: [
+                    { title: "JavaScript基礎", desc: "まずはJSをマスター" },
+                    { title: "TypeScript基本構文", desc: "型システムの理解" },
+                    { title: "ジェネリクス・高度な型", desc: "型の応用技術" },
+                    { title: "React + TypeScript", desc: "実践的な開発" },
+                    { title: "Node.js + TypeScript", desc: "バックエンド開発" }
+                ],
+                resources: [
+                    { name: "TypeScript公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "サバイバルTypeScript", type: "無料教材", icon: "📖" },
+                    { name: "Udemy", type: "動画教材", icon: "📹" },
+                    { name: "TypeScript Deep Dive", type: "書籍", icon: "📖" }
+                ]
+            },
+            {
+                name: "PHP",
+                icon: "🐘",
+                subtitle: "Web開発の定番",
+                description: "WordPressをはじめ、多くのWebサイトで使われている言語。サーバーサイド開発の入門に最適です。",
+                requirements: {
+                    web: 3,
+                    backend: 3,
+                    job: 2,
+                    easy: 2,
+                    freelance: 3
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜3ヶ月",
+                jobDemand: "高い",
+                averageSalary: "400〜700万円",
+                useCases: [
+                    "WordPressカスタマイズ",
+                    "Webアプリケーション",
+                    "ECサイト構築",
+                    "API開発",
+                    "CMSサイト"
+                ],
+                pros: [
+                    "Web開発に特化",
+                    "学習リソースが豊富",
+                    "フリーランス案件が多い",
+                    "WordPress案件で稼ぎやすい",
+                    "レンタルサーバーで簡単に公開"
+                ],
+                cons: [
+                    "古い書き方が混在",
+                    "セキュリティに注意が必要",
+                    "Web以外の用途は少ない"
+                ],
+                learningPath: [
+                    { title: "PHP基本文法", desc: "変数、関数、配列など" },
+                    { title: "データベース連携", desc: "MySQLとの接続" },
+                    { title: "Laravel入門", desc: "モダンなフレームワーク" },
+                    { title: "WordPress開発", desc: "テーマ・プラグイン作成" },
+                    { title: "Webアプリ開発", desc: "実践的なサービス構築" }
+                ],
+                resources: [
+                    { name: "Progate", type: "オンライン学習", icon: "🎓" },
+                    { name: "ドットインストール", type: "動画教材", icon: "📹" },
+                    { name: "PHP公式マニュアル", type: "公式", icon: "📚" },
+                    { name: "Laravel日本語ドキュメント", type: "公式", icon: "📚" }
+                ]
+            },
+            {
+                name: "Kotlin",
+                icon: "🤖",
+                subtitle: "モダンなAndroid開発",
+                description: "Androidアプリ開発の公式言語。Javaより簡潔で書きやすく、モダンな機能を持つ言語です。",
+                requirements: {
+                    mobile: 3,
+                    native: 3,
+                    modern: 3,
+                    job: 2
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜4ヶ月",
+                jobDemand: "高い",
+                averageSalary: "500〜900万円",
+                useCases: [
+                    "Androidアプリ開発",
+                    "マルチプラットフォームアプリ",
+                    "サーバーサイド開発",
+                    "Webアプリケーション"
+                ],
+                pros: [
+                    "Android公式言語",
+                    "Javaより簡潔で書きやすい",
+                    "null安全性が高い",
+                    "Javaとの互換性あり",
+                    "モダンな機能が充実"
+                ],
+                cons: [
+                    "Androidメインなので汎用性は限定的",
+                    "学習リソースがやや少なめ",
+                    "ビルド時間が長い"
+                ],
+                learningPath: [
+                    { title: "Kotlin基本文法", desc: "変数、関数、クラス" },
+                    { title: "オブジェクト指向", desc: "継承、インターフェース" },
+                    { title: "Android Studio環境構築", desc: "開発環境の準備" },
+                    { title: "Androidアプリ開発", desc: "UI作成、データ処理" },
+                    { title: "Jetpack Compose", desc: "モダンなUI開発" }
+                ],
+                resources: [
+                    { name: "Kotlin公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "Android Developers", type: "公式チュートリアル", icon: "🎓" },
+                    { name: "Udemy", type: "動画教材", icon: "📹" },
+                    { name: "Kotlinイン・アクション", type: "書籍", icon: "📖" }
+                ]
+            },
+            {
+                name: "Swift",
+                icon: "🍎",
+                subtitle: "iOSアプリ開発",
+                description: "Apple製品のアプリ開発に使用される言語。iPhone、iPad、Macアプリを作りたい方に最適です。",
+                requirements: {
+                    mobile: 3,
+                    native: 3,
+                    modern: 2,
+                    job: 2
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜4ヶ月",
+                jobDemand: "高い",
+                averageSalary: "500〜1000万円",
+                useCases: [
+                    "iPhoneアプリ開発",
+                    "iPadアプリ開発",
+                    "Macアプリ開発",
+                    "Apple Watchアプリ"
+                ],
+                pros: [
+                    "iOS開発の公式言語",
+                    "Appleエコシステムに最適化",
+                    "モダンで安全な文法",
+                    "平均年収が高め",
+                    "iOSアプリ市場が大きい"
+                ],
+                cons: [
+                    "Macが必須",
+                    "iOS開発以外の用途は限定的",
+                    "日本語情報が少なめ",
+                    "Appleの方針に依存"
+                ],
+                learningPath: [
+                    { title: "Swift基本文法", desc: "変数、型、制御構文" },
+                    { title: "オブジェクト指向", desc: "クラス、プロトコル" },
+                    { title: "Xcode環境構築", desc: "開発環境の準備" },
+                    { title: "UIKit/SwiftUI", desc: "UI作成の基礎" },
+                    { title: "iOSアプリ開発", desc: "実践的なアプリ作成" }
+                ],
+                resources: [
+                    { name: "Swift公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "Apple Developer", type: "公式チュートリアル", icon: "🎓" },
+                    { name: "Udemy", type: "動画教材", icon: "📹" },
+                    { name: "詳解Swift", type: "書籍", icon: "📖" }
+                ]
+            },
+            {
+                name: "Flutter (Dart)",
+                icon: "🦋",
+                subtitle: "マルチプラットフォーム開発",
+                description: "1つのコードでiOS、Android、Web、デスクトップアプリを作れる。効率的なクロスプラットフォーム開発が可能です。",
+                requirements: {
+                    mobile: 3,
+                    versatile: 3,
+                    modern: 3,
+                    trendy: 3,
+                    quick: 2
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜3ヶ月",
+                jobDemand: "増加中",
+                averageSalary: "500〜900万円",
+                useCases: [
+                    "iOS/Androidアプリ同時開発",
+                    "Webアプリケーション",
+                    "デスクトップアプリ",
+                    "クロスプラットフォームアプリ"
+                ],
+                pros: [
+                    "1つのコードで複数プラットフォーム対応",
+                    "開発スピードが速い",
+                    "UIが美しく作りやすい",
+                    "ホットリロードで効率的",
+                    "Googleがサポート"
+                ],
+                cons: [
+                    "ネイティブより若干パフォーマンスが落ちる",
+                    "日本語情報が少なめ",
+                    "歴史が浅く変化が激しい"
+                ],
+                learningPath: [
+                    { title: "Dart基本文法", desc: "Flutter用の言語を学ぶ" },
+                    { title: "Flutter基礎", desc: "ウィジェットの使い方" },
+                    { title: "状態管理", desc: "Providerなどを理解" },
+                    { title: "API連携", desc: "バックエンドとの通信" },
+                    { title: "アプリ公開", desc: "ストアへのリリース" }
+                ],
+                resources: [
+                    { name: "Flutter公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "Udemy", type: "動画教材", icon: "📹" },
+                    { name: "Flutter大学", type: "日本語コミュニティ", icon: "👥" },
+                    { name: "DartPad", type: "オンライン実行環境", icon: "🌐" }
+                ]
+            },
+            {
+                name: "Ruby",
+                icon: "💎",
+                subtitle: "スタートアップ御用達",
+                description: "日本発のプログラミング言語。書きやすさと楽しさを重視した設計で、Webアプリ開発に最適です。",
+                requirements: {
+                    web: 3,
+                    startup: 3,
+                    easy: 2,
+                    japanese: 3,
+                    backend: 2
+                },
+                difficulty: "★★☆",
+                learningTime: "2〜3ヶ月",
+                jobDemand: "中〜高",
+                averageSalary: "450〜800万円",
+                useCases: [
+                    "Webアプリケーション(Rails)",
+                    "スタートアップMVP開発",
+                    "自動化スクリプト",
+                    "API開発"
+                ],
+                pros: [
+                    "日本語情報が豊富",
+                    "書きやすく楽しい",
+                    "Rails で高速開発",
+                    "スタートアップで人気",
+                    "コミュニティが活発"
+                ],
+                cons: [
+                    "実行速度が遅め",
+                    "求人数は減少傾向",
+                    "Rails以外の用途は限定的"
+                ],
+                learningPath: [
+                    { title: "Ruby基本文法", desc: "変数、メソッド、クラス" },
+                    { title: "オブジェクト指向", desc: "Rubyらしい書き方" },
+                    { title: "Ruby on Rails", desc: "Webフレームワーク" },
+                    { title: "データベース連携", desc: "ActiveRecordの使い方" },
+                    { title: "Webアプリ開発", desc: "実践的なサービス構築" }
+                ],
+                resources: [
+                    { name: "Progate", type: "オンライン学習", icon: "🎓" },
+                    { name: "Rails Tutorial", type: "無料教材", icon: "📖" },
+                    { name: "Ruby公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "RailsGuides", type: "公式ガイド", icon: "📚" }
+                ]
+            },
+            {
+                name: "C#",
+                icon: "🎮",
+                subtitle: "ゲーム開発＆Windowsアプリ",
+                description: "Unity（ゲームエンジン）の開発言語として人気。ゲーム開発だけでなく、Windowsアプリ開発にも使用されます。",
+                requirements: {
+                    game: 3,
+                    system: 2,
+                    job: 2,
+                    versatile: 2
+                },
+                difficulty: "★★★",
+                learningTime: "3〜5ヶ月",
+                jobDemand: "中〜高",
+                averageSalary: "450〜850万円",
+                useCases: [
+                    "ゲーム開発(Unity)",
+                    "Windowsデスクトップアプリ",
+                    "Webアプリケーション",
+                    "VR/ARアプリ"
+                ],
+                pros: [
+                    "Unity開発で必須",
+                    "ゲーム業界で需要高",
+                    "型安全で堅牢",
+                    "Microsoftがサポート",
+                    "多用途に使える"
+                ],
+                cons: [
+                    "学習コストが高め",
+                    "Windows環境が有利",
+                    "Unity以外の求人は限定的"
+                ],
+                learningPath: [
+                    { title: "C#基本文法", desc: "変数、型、クラス" },
+                    { title: "オブジェクト指向", desc: "継承、ポリモーフィズム" },
+                    { title: "Unity環境構築", desc: "ゲームエンジンの準備" },
+                    { title: "2Dゲーム開発", desc: "簡単なゲームを作る" },
+                    { title: "3Dゲーム開発", desc: "本格的なゲーム制作" }
+                ],
+                resources: [
+                    { name: "ドットインストール", type: "動画教材", icon: "📹" },
+                    { name: "Unity Learn", type: "公式チュートリアル", icon: "🎓" },
+                    { name: "C#公式ドキュメント", type: "公式", icon: "📚" },
+                    { name: "Udemy", type: "動画教材", icon: "📹" }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let scores = {};
+        let selectedOption = null;
+
+        function startTest() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('test-screen').classList.remove('hidden');
+            currentQuestion = 0;
+            scores = {};
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-number').textContent = 
+                `質問 ${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <span class="option-icon">${option.icon}</span>
+                    <div class="option-content">
+                        <div class="option-title">${option.title}</div>
+                        <div class="option-desc">${option.desc}</div>
+                    </div>
+                `;
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            updateProgress();
+            selectedOption = null;
+            document.getElementById('next-button').disabled = true;
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            document.getElementById('next-button').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (selectedOption === null) return;
+
+            const question = questions[currentQuestion];
+            const selected = question.options[selectedOption];
+            
+            for (let key in selected.scores) {
+                scores[key] = (scores[key] || 0) + selected.scores[key];
+            }
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function calculateMatch(language) {
+            let matchScore = 0;
+            let totalWeight = 0;
+
+            for (let key in language.requirements) {
+                const userScore = scores[key] || 0;
+                const requirement = language.requirements[key];
+                const weight = requirement;
+
+                if (userScore >= requirement) {
+                    matchScore += userScore * weight;
+                } else {
+                    matchScore += userScore * weight * 0.5;
+                }
+                totalWeight += 3 * weight;
+            }
+
+            return Math.round((matchScore / totalWeight) * 100);
+        }
+
+        function showResult() {
+            document.getElementById('test-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const recommendations = languages.map(lang => ({
+                language: lang,
+                matchPercentage: calculateMatch(lang)
+            }));
+
+            recommendations.sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+            const topRecommendations = recommendations.slice(0, 3);
+            const recommendationsContainer = document.getElementById('recommendations');
+            recommendationsContainer.innerHTML = '';
+
+            topRecommendations.forEach((rec, index) => {
+                const medals = ['🥇', '🥈', '🥉'];
+                const langCard = document.createElement('div');
+                langCard.className = 'language-card';
+                langCard.innerHTML = `
+                    <div class="language-rank">${medals[index]}</div>
+                    <div class="language-header">
+                        <div class="language-icon">${rec.language.icon}</div>
+                        <div class="language-info">
+                            <h2 class="language-name">${rec.language.name}</h2>
+                            <div class="language-subtitle">${rec.language.subtitle}</div>
+                            <span class="match-rate">適合度 ${rec.matchPercentage}%</span>
+                        </div>
+                    </div>
+                    <p class="language-description">${rec.language.description}</p>
+                    
+                    <div class="language-stats">
+                        <div class="stat-item">
+                            <span class="stat-icon">📊</span>
+                            <div class="stat-content">
+                                <div class="stat-label">難易度</div>
+                                <div class="stat-value">${rec.language.difficulty}</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⏱️</span>
+                            <div class="stat-content">
+                                <div class="stat-label">習得期間</div>
+                                <div class="stat-value">${rec.language.learningTime}</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">💼</span>
+                            <div class="stat-content">
+                                <div class="stat-label">求人需要</div>
+                                <div class="stat-value">${rec.language.jobDemand}</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">💰</span>
+                            <div class="stat-content">
+                                <div class="stat-label">平均年収</div>
+                                <div class="stat-value">${rec.language.averageSalary}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="use-cases">
+                        <h4>💡 できること</h4>
+                        <div class="use-case-tags">
+                            ${rec.language.useCases.map(useCase => 
+                                `<span class="use-case-tag">${useCase}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>👍 メリット</h4>
+                            <ul>
+                                ${rec.language.pros.map(pro => `<li>${pro}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>👎 注意点</h4>
+                            <ul>
+                                ${rec.language.cons.map(con => `<li>${con}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="learning-path">
+                        <h4>📚 学習ロードマップ</h4>
+                        <div class="learning-steps">
+                            ${rec.language.learningPath.map((step, i) => `
+                                <div class="learning-step">
+                                    <div class="step-number">${i + 1}</div>
+                                    <div class="step-content">
+                                        <div class="step-title">${step.title}</div>
+                                        <div class="step-description">${step.desc}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="resources">
+                        <h4>🎓 おすすめ学習リソース</h4>
+                        <div class="resource-list">
+                            ${rec.language.resources.map(resource => `
+                                <div class="resource-item">
+                                    <span class="resource-icon">${resource.icon}</span>
+                                    <div class="resource-content">
+                                        <div class="resource-name">${resource.name}</div>
+                                        <div class="resource-type">${resource.type}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                recommendationsContainer.appendChild(langCard);
+            });
+
+            const result = {
+                date: new Date().toISOString(),
+                scores: scores,
+                recommendations: topRecommendations.map(r => ({
+                    name: r.language.name,
+                    match: r.matchPercentage
+                }))
+            };
+            localStorage.setItem('lastLanguageResult', JSON.stringify(result));
+        }
+
+        function restartTest() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
